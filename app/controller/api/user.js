@@ -1,11 +1,7 @@
 'use strict'
 
 const await = require('await-stream-ready/lib/await')
-
-
 const Controller = require('egg').Controller
-
-
 class UserController extends Controller {
   // 注册
   async reg() {
@@ -31,15 +27,10 @@ class UserController extends Controller {
         desc: '确认密码',
       },
     })
-
-
     let { username, password, repassword } = ctx.request.body
-
-
     if (password !== repassword) {
       ctx.throw(422, '密码和确认密码不一致')
     }
-
 
     // 验证用户是否已经存在
     if (
@@ -52,21 +43,16 @@ class UserController extends Controller {
       ctx.throw(400, '该用户名已存在')
     }
 
-
     let user = await app.model.User.create({
       username,
       password,
     })
 
-
     if (!user) {
       ctx.throw(400, '创建用户失败')
     }
-
-
     ctx.apiSuccess(user)
   }
-
 
   // 登录
   async login() {
@@ -85,16 +71,12 @@ class UserController extends Controller {
       },
     })
 
-
     let { username, password } = ctx.request.body
-
-
     let user = await app.model.User.findOne({
       where: {
         username,
       },
     })
-
 
     if (!user) {
       ctx.throw(400, '该用户不存在')
@@ -107,20 +89,16 @@ class UserController extends Controller {
 
     user = JSON.parse(JSON.stringify(user))
 
-
     console.log(user)
-
 
     // 生成token
     user.token = ctx.getToken(user)
     delete user.password
 
-
     // 加入到存储中
     if (!(await this.service.cache.set('user_' + user.id, user.token))) {
       ctx.throw(400, '登录失败')
     }
-
 
     ctx.apiSuccess(user)
   }

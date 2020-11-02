@@ -16,4 +16,8 @@ module.exports = app => {
   router.post('/api/logout', controller.api.user.logout)
   //获取当前用户信息
   router.get('/api/user/info', controller.api.user.info)
+  //修改直播间状态
+  router.post('/api/live/changestatus',controller.api.live.changeStatus)
+  //直播间列表
+  router.get('/api/live/list/:page',controller.api.live.list)
 };
