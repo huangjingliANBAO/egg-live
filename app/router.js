@@ -11,7 +11,7 @@ module.exports = app => {
   // 用户登录
   router.post('/api/login', controller.api.user.login);
   // 创建直播间
-  router.post('/api/live/create', controller.api.live.save)
+  router.post('/api/live/create', controller.api.live.save);
   //退出登录
   router.post('/api/logout', controller.api.user.logout)
   //获取当前用户信息
@@ -22,4 +22,8 @@ module.exports = app => {
   router.get('/api/live/list/:page',controller.api.live.list)
   //查看指定直播间
   router.get('/api/live/read/:id',controller.api.live.read)
+  //手机验证码登录
+  router.post('/api/phoneLogin',controller.api.user.phoneLogin)
+  //发送手机验证码
+  router.post('/api/sendcode',controller.api.sms.sendCode)
 };

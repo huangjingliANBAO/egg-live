@@ -1,49 +1,50 @@
+/* eslint-disable no-unused-vars */
 /* eslint valid-jsdoc: "off" */
-'use strict'
 
+'use strict';
+const NodeMediaServer = require('node-media-server');
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
-module.exports = (appInfo) => {
+module.exports = appInfo => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = (exports = {})
-
+  const config = exports = {};
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1604158088886_8645'
-
+  config.keys = appInfo.name + '_1604209593258_4433';
 
   // add your middleware config here
-  config.middleware = ['errorHandler']
+  config.middleware = [ 'errorHandler', 'auth' ];
 
+  config.auth = {
+    match: [ '/api/live/create', '/api/logout', '/api/user/info', '/api/live/changestatus' ],
+  };
 
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-  }
-
-
+  };
+  // 跨域的配置
   config.security = {
     // 关闭 csrf
     csrf: {
       headerName: 'x-csrf-token',
-      ignore: (ctx) => {
-        return ctx.request.url.startsWith('/api')
+      ignore: ctx => {
+        return ctx.request.url.startsWith('/api');
       },
     },
     // 跨域白名单
-    // domainWhiteList: ['http://localhost:3000'],
-  }
+    // domainWhiteList: [ 'http://localhost:3000' ],
+  };
   // 允许跨域的方法
   config.cors = {
     origin: '*',
     allowMethods: 'GET, PUT, POST, DELETE, PATCH',
-  }
-
-
+  };
+  // 数据库连接配置
   config.sequelize = {
     dialect: 'mysql',
     host: '127.0.0.1',
@@ -66,25 +67,16 @@ module.exports = (appInfo) => {
       // 所有驼峰命名格式化
       underscored: true,
     },
-  }
-
-
+  };
+  // 数据加密 生成随机的密钥
+  config.crypto = {
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
+  };
+  // 参数校验开启
   config.valparams = {
     locale: 'zh-cn',
     throwError: true,
-  }
-
-
-  config.crypto = {
-    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
-  }
-
-
-  config.jwt = {
-    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
-  }
-
-
+  };
   // redis存储
   config.redis = {
     client: {
@@ -93,8 +85,11 @@ module.exports = (appInfo) => {
       password: '',
       db: 2,
     },
-  }
-  
+  };
+  // jwt加密鉴权
+  config.jwt = {
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
+  };
   // 流媒体配置
   config.mediaServer = {
     rtmp: {
@@ -102,11 +97,11 @@ module.exports = (appInfo) => {
       chunk_size: 60000,
       gop_cache: true,
       ping: 30,
-      ping_timeout: 60
+      ping_timeout: 60,
     },
     http: {
       port: 23481,
-      allow_origin: '*'
+      allow_origin: '*',
     },
     auth: {
       play: true,
@@ -114,14 +109,10 @@ module.exports = (appInfo) => {
       secret: 'nodemedia2017privatekey',
     },
   };
-
-  config.middleware = ['errorHandler','auth']
-  config.auth = {
-    match:['/api/live/create'],
-  }
-
+  const nms = new NodeMediaServer(config.mediaServer);
+  nms.run();
   return {
     ...config,
     ...userConfig,
-  }
-}
+  };
+};
