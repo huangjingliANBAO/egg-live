@@ -28,4 +28,5 @@ module.exports = app => {
   router.post('/api/sendcode',controller.api.sms.sendCode)
   //socket路由配置测试
   io.of('/').route('test',io.controller.nsp.test)
+  io.of('/').route('joinLive',io.controller.nsp.joinLive)
 };
