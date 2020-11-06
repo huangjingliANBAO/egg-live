@@ -124,7 +124,12 @@ module.exports = appInfo => {
       port:6379,
       db:0,
     }
-  }
+  };
+  config.view = {
+    mapping: {
+      '.html': 'nunjucks',
+    },
+  };
   const nms = new NodeMediaServer(config.mediaServer);
   nms.run();
   return {
