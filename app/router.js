@@ -1,4 +1,7 @@
 'use strict';
+
+const manager = require("./model/manager");
+
 module.exports = app => {
   const { router, controller,io } = app;
   router.get('/', controller.home.index);
@@ -41,9 +44,43 @@ router.get('/test',controller.admin.test.page);
   //登录登出接口
   router.post('/admin/loginevent', controller.admin.home.loginevent)
   //管理员模块列表路由
-  router.get('/admin/manager', controller.admin.manager.index)
+ // router.get('/admin/manager', controller.admin.manager.index)
   //创建管理员页面路由
   router.get('/admin/manager/create', controller.admin.manager.create)
   //新增管理员接口
   router.post('/admin/manager', controller.admin.manager.save)
+  //管理员列表
+  route.get('/admin/manager',controller.admin.manager.index)
+  //编辑管理员路由
+  router.get('/admin/manager/edit/:id',controller.admin.manager.edit)
+  //删除管理员路由
+  router.get('/admin/manager/delete/:id',controller.admin.manager.delete)
+  //更新接口,(编辑和删除公用)
+  router.post('/admin/manager/:id',controller.admin.manager.update)
+  //上传文件接口
+  route.post('/admin/upload',controller.admin.common.upload)
+  //用户模块（列表）路由
+  router.get('/admin/user',controller.admin.user.index)
+  //新增用户路由
+  router.get('/admin/user/create',controller.admin.user.create)
+  //新增用户接口
+  router.post('/admin/user',controller.admin.user.save)
+  //编辑用户路由
+  router.get('/admin/user/edit/:id',controller.admin.user.edit)
+  //删除用户路由
+  router.get('/admin/user/delete/:id',controller.admin.user.delete)
+  //更新用户数据接口
+  router.post('/admin/user/:id',controller.admin.user.update)
+  //礼物模块，列表路由
+  router.get('/admin/gift',controller.admin.gift.index)
+  //新增礼物路由
+  router.get('/admin/gift/create',controller.admin.gift.create)
+  //新增礼物接口
+  router.post('/admin/gift',controller.admin.gift.save)
+  //编辑礼物路由
+  router.get('/admin/gift/edit/:id',controller.admin.gift.edit)
+  //删除礼物路由
+  router.get('/admin/gift/delete/:id',controller.admin.gift.delete)
+  //更新礼物数据接口
+  router.post('admin/gift/:id',controller.admin.gift.update)
 };

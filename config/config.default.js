@@ -1,65 +1,58 @@
+/* eslint-disable no-unused-vars */
 /* eslint valid-jsdoc: "off" */
-'use strict'
 
+'use strict';
+const NodeMediaServer = require('node-media-server');
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
-module.exports = (appInfo) => {
+module.exports = appInfo => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = (exports = {})
-
+  const config = exports = {};
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1604158088886_8645'
-
+  config.keys = appInfo.name + '_1604209593258_4433';
 
   // add your middleware config here
-  config.middleware = ['errorHandler', 'auth', 'adminAuth', 'adminSidebar']
+  config.middleware = [ 'errorHandler', 'auth', 'adminAuth', 'adminSidebar' ];
 
-  config.webUrl = 'http://127.0.0.1:7001'
-  // 配置哪些路由需要验证
+  config.webUrl = 'http://127.0.0.1:7001';
+  // 配置那些路由是需要验证token
   config.auth = {
-    match: [
-      '/api/logout',
-      '/api/live/create',
-      '/api/live/changestatus',
-      '/api/gift/wxpay',
-      '/api/user/info',
-    ],
-  }
-  config.adminAuth = {
-    ignore: ['/api', '/admin/login', '/admin/loginevent'],
-  }
-  config.adminSidebar = {
-    ignore: ['/api', '/admin/login', '/admin/loginevent', '/public'],
-  }
+    match: [ '/api/live/create', '/api/logout', '/api/user/info', '/api/live/changstatus', '/api/gift/wxpay' ],
+  };
 
+  config.adminAuth = {
+    ignore: [ '/api', '/admin/login', '/admin/loginevent' ],
+  };
+  config.adminSidebar = {
+    ignore: [ '/api', '/admin/login', '/admin/loginevent', '/public' ],
+  };
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-  }
-
-  //跨域配置
+  };
+  // 跨域的配置
   config.security = {
+    // 关闭 csrf
     csrf: {
       headerName: 'x-csrf-token',
-      ignore: (ctx) => {
-        return ctx.request.url.startsWith('/api')
+      ignore: ctx => {
+        return ctx.request.url.startsWith('/api');
       },
     },
     // 跨域白名单
-    // domainWhiteList: ['http://localhost:3000'],
-  }
+    // domainWhiteList: [ 'http://localhost:3000' ],
+  };
   // 允许跨域的方法
   config.cors = {
     origin: '*',
     allowMethods: 'GET, PUT, POST, DELETE, PATCH',
-  }
-
-  //数据库配置
+  };
+  // 数据库连接配置
   config.sequelize = {
     dialect: 'mysql',
     host: '127.0.0.1',
@@ -82,25 +75,16 @@ module.exports = (appInfo) => {
       // 所有驼峰命名格式化
       underscored: true,
     },
-  }
-
-  //参数校验配置
+  };
+  // 数据加密 生成随机的密钥
+  config.crypto = {
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
+  };
+  // 参数校验开启
   config.valparams = {
     locale: 'zh-cn',
     throwError: true,
-  }
-
-  //加密密钥
-  config.crypto = {
-    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
-  }
-
-  //jwt配置密钥
-  config.jwt = {
-    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
-  }
-
-
+  };
   // redis存储
   config.redis = {
     client: {
@@ -109,9 +93,12 @@ module.exports = (appInfo) => {
       password: '',
       db: 2,
     },
-  }
-
-  // 流媒体服务器配置
+  };
+  // jwt加密鉴权
+  config.jwt = {
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
+  };
+  // 流媒体配置
   config.mediaServer = {
     rtmp: {
       port: 23480,
@@ -127,44 +114,41 @@ module.exports = (appInfo) => {
     auth: {
       play: true,
       publish: true,
-      secret: 'live_602309194_sg0Ia0wDS6qZdaMmqUwvlaFk6lTrhT',
+      secret: 'nodemedia2017privatekey',
     },
-  }
-
-  //websocket配置
+  };
+  // socket.io安装和通讯
   config.io = {
     init: {
       wsEngine: 'ws',
     },
     namespace: {
       '/': {
-        connectionMiddleware: ['auth'],
+        connectionMiddleware: [],
         packetMiddleware: [],
       },
     },
     redis: {
       host: '127.0.0.1',
       port: 6379,
+      db: 0,
     },
-  }
-
- //模版引擎配置
+  };
+  // 模板引擎
   config.view = {
     mapping: {
       '.html': 'nunjucks',
     },
-  }
-
-  //session配置
+  };
+  // session配置
   config.session = {
     renew: true,
     key: 'EGG_SESS',
     maxAge: 24 * 3600 * 1000 * 30, // 1 天
     httpOnly: true,
     encrypt: true,
-  }
-
-  //文件上传配置
+  };
+  // 文件上传配置
   config.multipart = {
     fileSize: '50mb',
     mode: 'stream',
@@ -179,12 +163,13 @@ module.exports = (appInfo) => {
       '.GIF',
       '.jpeg',
       '.JPEG',
-    ], //上传的文件格式
-  }
+    ], // 上传的文件格式
+  };
 
-
+  const nms = new NodeMediaServer(config.mediaServer);
+  nms.run();
   return {
     ...config,
     ...userConfig,
-  }
-}
+  };
+};

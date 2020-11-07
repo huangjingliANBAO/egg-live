@@ -1,31 +1,38 @@
-'use strict'
+'use strict';
 
 /** @type Egg.EggPlugin */
 module.exports = {
+  // 跨域的配置
   cors: {
     enable: true,
     package: 'egg-cors',
   },
+  // 数据库的配置插件
   sequelize: {
     enable: true,
     package: 'egg-sequelize',
   },
+  // 参数校验
   valparams: {
     enable: true,
     package: 'egg-valparams',
   },
-  jwt: {
-    enable: true,
-    package: 'egg-jwt',
-  },
+  // redis缓存插件
   redis: {
     enable: true,
     package: 'egg-redis',
   },
-  io:{
-    enable:true,
-    package:'egg-socket.io',
+  // jwt加密鉴权
+  jwt: {
+    enable: true,
+    package: 'egg-jwt',
   },
+  // socket.io安装和通讯
+  io: {
+    enable: true,
+    package: 'egg-socket.io',
+  },
+  // 模板引擎
   nunjucks: {
     enable: true,
     package: 'egg-view-nunjucks',
@@ -34,4 +41,4 @@ module.exports = {
     enable: true,
     package: 'egg-tenpay',
   },
-}
+};
