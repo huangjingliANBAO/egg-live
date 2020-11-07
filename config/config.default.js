@@ -1,50 +1,65 @@
-/* eslint-disable no-unused-vars */
 /* eslint valid-jsdoc: "off" */
+'use strict'
 
-'use strict';
-const NodeMediaServer = require('node-media-server');
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
-module.exports = appInfo => {
+module.exports = (appInfo) => {
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = exports = {};
+  const config = (exports = {})
+
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1604209593258_4433';
+  config.keys = appInfo.name + '_1604158088886_8645'
+
 
   // add your middleware config here
-  config.middleware = [ 'errorHandler', 'auth' ];
+  config.middleware = ['errorHandler', 'auth', 'adminAuth', 'adminSidebar']
 
+  config.webUrl = 'http://127.0.0.1:7001'
+  // 配置哪些路由需要验证
   config.auth = {
-    match: [ '/api/live/create', '/api/logout', '/api/user/info', '/api/live/changestatus' ],
-  };
+    match: [
+      '/api/logout',
+      '/api/live/create',
+      '/api/live/changestatus',
+      '/api/gift/wxpay',
+      '/api/user/info',
+    ],
+  }
+  config.adminAuth = {
+    ignore: ['/api', '/admin/login', '/admin/loginevent'],
+  }
+  config.adminSidebar = {
+    ignore: ['/api', '/admin/login', '/admin/loginevent', '/public'],
+  }
 
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
-  };
-  // 跨域的配置
+  }
+
+  //跨域配置
   config.security = {
-    // 关闭 csrf
     csrf: {
       headerName: 'x-csrf-token',
-      ignore: ctx => {
-        return ctx.request.url.startsWith('/api');
+      ignore: (ctx) => {
+        return ctx.request.url.startsWith('/api')
       },
     },
     // 跨域白名单
-    // domainWhiteList: [ 'http://localhost:3000' ],
-  };
+    // domainWhiteList: ['http://localhost:3000'],
+  }
   // 允许跨域的方法
   config.cors = {
     origin: '*',
     allowMethods: 'GET, PUT, POST, DELETE, PATCH',
-  };
-  // 数据库连接配置
+  }
+
+  //数据库配置
   config.sequelize = {
     dialect: 'mysql',
     host: '127.0.0.1',
@@ -67,16 +82,25 @@ module.exports = appInfo => {
       // 所有驼峰命名格式化
       underscored: true,
     },
-  };
-  // 数据加密 生成随机的密钥
-  config.crypto = {
-    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
-  };
-  // 参数校验开启
+  }
+
+  //参数校验配置
   config.valparams = {
     locale: 'zh-cn',
     throwError: true,
-  };
+  }
+
+  //加密密钥
+  config.crypto = {
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
+  }
+
+  //jwt配置密钥
+  config.jwt = {
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
+  }
+
+
   // redis存储
   config.redis = {
     client: {
@@ -85,12 +109,9 @@ module.exports = appInfo => {
       password: '',
       db: 2,
     },
-  };
-  // jwt加密鉴权
-  config.jwt = {
-    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
-  };
-  // 流媒体配置
+  }
+
+  // 流媒体服务器配置
   config.mediaServer = {
     rtmp: {
       port: 23480,
@@ -106,34 +127,64 @@ module.exports = appInfo => {
     auth: {
       play: true,
       publish: true,
-      secret: 'nodemedia2017privatekey',
+      secret: 'live_602309194_sg0Ia0wDS6qZdaMmqUwvlaFk6lTrhT',
     },
-  };
-  config.io ={
-    init:{
-      wsEngine:'ws',
+  }
+
+  //websocket配置
+  config.io = {
+    init: {
+      wsEngine: 'ws',
     },
-    namespace:{
-      '/':{
-        connectionMiddleware:[],
-        packetMiddleware:[],
+    namespace: {
+      '/': {
+        connectionMiddleware: ['auth'],
+        packetMiddleware: [],
       },
     },
-    redis:{
-      host:'127.0.0.1',
-      port:6379,
-      db:0,
-    }
-  };
+    redis: {
+      host: '127.0.0.1',
+      port: 6379,
+    },
+  }
+
+ //模版引擎配置
   config.view = {
     mapping: {
       '.html': 'nunjucks',
     },
-  };
-  const nms = new NodeMediaServer(config.mediaServer);
-  nms.run();
+  }
+
+  //session配置
+  config.session = {
+    renew: true,
+    key: 'EGG_SESS',
+    maxAge: 24 * 3600 * 1000 * 30, // 1 天
+    httpOnly: true,
+    encrypt: true,
+  }
+
+  //文件上传配置
+  config.multipart = {
+    fileSize: '50mb',
+    mode: 'stream',
+    fileExtensions: [
+      '.xls',
+      '.txt',
+      '.jpg',
+      '.JPG',
+      '.png',
+      '.PNG',
+      '.gif',
+      '.GIF',
+      '.jpeg',
+      '.JPEG',
+    ], //上传的文件格式
+  }
+
+
   return {
     ...config,
     ...userConfig,
-  };
-};
+  }
+}

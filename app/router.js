@@ -30,11 +30,20 @@ module.exports = app => {
   io.of('/').route('gift', io.controller.nsp.gift)
 router.get('/api/gift/list', controller.api.gift.list)
 router.get('/test',controller.admin.test.page);
-//新增管理员
-router.get('/admin/manager/create',controller.admin.manager.create)
-router.post('/admin/manager',controller.admin.manager.save)
-//管理员列表
-router.get('/admin/manager',controller.admin.manager.index);
-//删除管理员
-router.get('/admin/manager/delete/:id', controller.admin.manager.delete)
+
+// 后台相关路由配置
+  //dashbord首页
+  router.get('/admin', controller.admin.home.index)
+  //管理员登录路由
+  router.get('/admin/login', controller.admin.home.login)
+  //登出路由
+  router.get('/admin/logout', controller.admin.home.logout)
+  //登录登出接口
+  router.post('/admin/loginevent', controller.admin.home.loginevent)
+  //管理员模块列表路由
+  router.get('/admin/manager', controller.admin.manager.index)
+  //创建管理员页面路由
+  router.get('/admin/manager/create', controller.admin.manager.create)
+  //新增管理员接口
+  router.post('/admin/manager', controller.admin.manager.save)
 };
